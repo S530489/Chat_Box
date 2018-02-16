@@ -1,0 +1,40 @@
+
+<?php
+	
+	//lets fetch the last displayed chat id
+	$data = $_REQUEST;
+	$last_displayed_chat_id = $data['last_displayed_chat_id'];
+	
+	//connect to msql server
+	$con = mysqli_connect('localhost', "root", "", "group_chat");
+	
+	if(isset($data['user_name']) && isset($data['user_comment'])){
+		$insert = "INSERT INTO chats(user_name, user_comment) values('".$data['user_name']."', '".$data['user_comment']."')";
+		$insert_result= mysqli_query($con, $insert);
+		
+	}
+	$select = "SELECT * 
+				FROM chats
+					WHERE chat_id > '".$last_displayed_chat_id."'";
+					
+	$result = mysqli_query($con , $select);
+	$arr = array();
+	
+	$row_count = mysqli_num_rows($result);
+	
+	if($row_count > 0){
+		while ($row = mysqli_fetch_array($result)){
+			array_push($arr, $row);
+		}
+		
+	}
+	
+	//close the MYSQL Connection 
+	mysqli_close($con);
+	echo json_encode($arr);
+	
+
+
+
+
+?>
